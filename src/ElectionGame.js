@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-const DodgeGame = () => {
+const ElectionGame = () => {
   const [playerPos, setPlayerPos] = useState(250);
   const [obstacles, setObstacles] = useState([]);
   const [score, setScore] = useState(0);
@@ -201,4 +201,4 @@ const DodgeGame = () => {
   );
 };
 
-export default DodgeGame;
+export default ElectionGame;

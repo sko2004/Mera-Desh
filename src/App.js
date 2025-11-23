@@ -1,10 +1,10 @@
 import logo from './logo.svg';
 import './App.css';
-import DodgeGame from './DodgeGame';
+import ElectionGame from './ElectionGame';
 
 function App() {
   return (
-    <DodgeGame />
+    <ElectionGame />
   )
 }
 
