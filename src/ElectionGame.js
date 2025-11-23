@@ -140,6 +140,11 @@ const ElectionGame = () => {
   };
 
   const continueVoting = () => {
+    // Stop the victory audio
+    if (victoryAudioRef.current) {
+      victoryAudioRef.current.pause();
+      victoryAudioRef.current.currentTime = 0;
+    }
     setShowVictoryPopup(false);
     setVotes(0);
     setObstacles([]);
@@ -149,18 +154,18 @@ const ElectionGame = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-blue-900 to-blue-700 p-4">
+    <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-b from-blue-900 to-blue-700 py-2 px-4">
       <audio ref={audioRef} src="/audio.mp3" preload="auto" />
       <audio ref={victoryAudioRef} src="/desh.mp3" preload="auto" />
-      <div className="mb-4 text-white text-center">
+      <div className="mb-1 text-white text-center">
         <img 
           src="/logo.png" 
           alt="Logo" 
-          className="mx-auto mb-4 h-20 w-auto object-contain"
+          className="mx-auto mb-1 h-12 w-auto object-contain"
         />
         {/* <h1 className="text-4xl font-bold mb-2">Election Game</h1> */}
         <p className="text-xl">Votes: {Votes}</p>
-        <p className="text-sm mt-2">Use ← → Arrow Keys to move</p>
+        <p className="text-xs mt-1">Use ← → Arrow Keys to move</p>
       </div>
 
       <div 
@@ -250,7 +255,19 @@ const ElectionGame = () => {
         <div className="absolute bottom-0 left-0 right-0 h-2 bg-green-700"></div>
       </div>
 
-      
+      <div className="mt-2 text-white text-center text-xs">
+        <p className="mb-1">
+          This project is open source. Feel free to contribute and send a PR!
+        </p>
+        <a
+          href="https://github.com/arjav1528/Mera-Desh"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-yellow-300 hover:text-yellow-200 underline transition-colors"
+        >
+          View on GitHub
+        </a>
+      </div>
     </div>
   );
 };
