@@ -8,6 +8,7 @@ const ElectionGame = () => {
   const [gameStarted, setGameStarted] = useState(false);
   const gameLoopRef = useRef();
   const keysPressed = useRef({});
+  const audioRef = useRef(null);
 
   const PLAYER_WIDTH = 60;
   const PLAYER_HEIGHT = 80;
@@ -65,6 +66,11 @@ const ElectionGame = () => {
             obs.x + OBSTACLE_SIZE > playerPos &&
             obs.x < playerPos + PLAYER_WIDTH
           ) {
+
+            if (audioRef.current) {
+              audioRef.current.currentTime = 0; 
+              audioRef.current.play().catch(err => console.log('Audio play failed:', err));
+            }
             setGameOver(true);
             return false;
           }
@@ -118,6 +124,7 @@ const ElectionGame = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-blue-900 to-blue-700 p-4">
+      <audio ref={audioRef} src="/audio.mp3" preload="auto" />
       <div className="mb-4 text-white text-center">
         <h1 className="text-4xl font-bold mb-2">Dodge Game</h1>
         <p className="text-xl">Score: {score}</p>
