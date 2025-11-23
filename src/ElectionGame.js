@@ -3,12 +3,14 @@ import React, { useState, useEffect, useRef } from 'react';
 const ElectionGame = () => {
   const [playerPos, setPlayerPos] = useState(250);
   const [obstacles, setObstacles] = useState([]);
-  const [score, setScore] = useState(0);
+  const [Votes, setVotes] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
+  const [showVictoryPopup, setShowVictoryPopup] = useState(false);
   const gameLoopRef = useRef();
   const keysPressed = useRef({});
   const audioRef = useRef(null);
+  const victoryAudioRef = useRef(null);
 
   const PLAYER_WIDTH = 60;
   const PLAYER_HEIGHT = 80;
@@ -41,7 +43,7 @@ const ElectionGame = () => {
   }, []);
 
   useEffect(() => {
-    if (!gameStarted || gameOver) return;
+    if (!gameStarted || gameOver || showVictoryPopup) return;
 
     const gameLoop = () => {
       setPlayerPos(prev => {
@@ -76,7 +78,7 @@ const ElectionGame = () => {
           }
           
           if (obs.y > GAME_HEIGHT) {
-            setScore(s => s + 1);
+            setVotes(s => s + 1);
             return false;
           }
           
@@ -105,29 +107,59 @@ const ElectionGame = () => {
         cancelAnimationFrame(gameLoopRef.current);
       }
     };
-  }, [gameStarted, gameOver, playerPos]);
+  }, [gameStarted, gameOver, showVictoryPopup, playerPos]);
+
+  useEffect(() => {
+    if (Votes >= 10 && !showVictoryPopup) {
+      setShowVictoryPopup(true);
+    }
+  }, [Votes, showVictoryPopup]);
+
+  useEffect(() => {
+    if (showVictoryPopup && victoryAudioRef.current) {
+      victoryAudioRef.current.currentTime = 0;
+      victoryAudioRef.current.play().catch(err => console.log('Victory audio play failed:', err));
+    }
+  }, [showVictoryPopup]);
 
   const startGame = () => {
     setGameStarted(true);
     setGameOver(false);
-    setScore(0);
+    setVotes(0);
     setObstacles([]);
     setPlayerPos(250);
+    setShowVictoryPopup(false);
   };
 
   const resetGame = () => {
     setGameOver(false);
-    setScore(0);
+    setVotes(0);
     setObstacles([]);
     setPlayerPos(250);
+    setShowVictoryPopup(false);
+  };
+
+  const continueVoting = () => {
+    setShowVictoryPopup(false);
+    setVotes(0);
+    setObstacles([]);
+    setPlayerPos(250);
+    setGameOver(false);
+    // Game will automatically continue since gameStarted is still true
   };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-blue-900 to-blue-700 p-4">
       <audio ref={audioRef} src="/audio.mp3" preload="auto" />
+      <audio ref={victoryAudioRef} src="/desh.mp3" preload="auto" />
       <div className="mb-4 text-white text-center">
-        <h1 className="text-4xl font-bold mb-2">Dodge Game</h1>
-        <p className="text-xl">Score: {score}</p>
+        <img 
+          src="/logo.png" 
+          alt="Logo" 
+          className="mx-auto mb-4 h-20 w-auto object-contain"
+        />
+        {/* <h1 className="text-4xl font-bold mb-2">Election Game</h1> */}
+        <p className="text-xl">Votes: {Votes}</p>
         <p className="text-sm mt-2">Use ← → Arrow Keys to move</p>
       </div>
 
@@ -141,21 +173,38 @@ const ElectionGame = () => {
               onClick={startGame}
               className="px-8 py-4 bg-green-500 text-white text-2xl font-bold rounded-lg hover:bg-green-600 transition"
             >
-              Start Game
+              Start Voting
             </button>
+          </div>
+        )}
+
+        {showVictoryPopup && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-80 z-30">
+            <div className="text-center bg-gradient-to-br from-orange-500 to-orange-700 p-8 rounded-2xl border-4 border-yellow-400 shadow-2xl">
+              <h2 className="text-5xl font-bold text-white mb-4 animate-pulse">
+                ABKI BAAR MODI SARKAAR
+              </h2>
+              <p className="text-2xl text-yellow-200 mb-6">🎉 बहुमत 🎉</p>
+              <button
+                onClick={continueVoting}
+                className="px-8 py-4 bg-green-600 text-white text-xl font-bold rounded-lg hover:bg-green-700 transition shadow-lg"
+              >
+                Continue Voting
+              </button>
+            </div>
           </div>
         )}
 
         {gameOver && (
           <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 z-20">
             <div className="text-center">
-              <h2 className="text-4xl font-bold text-red-500 mb-4">Game Over!</h2>
-              <p className="text-2xl text-white mb-6">Final Score: {score}</p>
+              <h2 className="text-4xl font-bold text-red-500 mb-4">Voting Over!</h2>
+              <p className="text-2xl text-white mb-6">Final Votes: {Votes}</p>
               <button
                 onClick={resetGame}
                 className="px-8 py-4 bg-blue-500 text-white text-xl font-bold rounded-lg hover:bg-blue-600 transition"
               >
-                Play Again
+                  Vote Again
               </button>
             </div>
           </div>
@@ -201,9 +250,7 @@ const ElectionGame = () => {
         <div className="absolute bottom-0 left-0 right-0 h-2 bg-green-700"></div>
       </div>
 
-      <div className="mt-4 text-white text-center max-w-md">
-        <p className="text-sm">Dodge the falling obstacles! Each one you avoid adds to your score.</p>
-      </div>
+      
     </div>
   );
 };
