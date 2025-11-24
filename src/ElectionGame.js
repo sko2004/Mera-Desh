@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 const ElectionGame = () => {
   const [playerPos, setPlayerPos] = useState(250);
   const [obstacles, setObstacles] = useState([]);
-  const [Votes, setVotes] = useState(0);
+  const [votes, setVotes] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
   const [showVictoryPopup, setShowVictoryPopup] = useState(false);
@@ -110,10 +110,10 @@ const ElectionGame = () => {
   }, [gameStarted, gameOver, showVictoryPopup, playerPos]);
 
   useEffect(() => {
-    if (Votes >= 10 && !showVictoryPopup) {
+    if (votes >= 10 && !showVictoryPopup) {
       setShowVictoryPopup(true);
     }
-  }, [Votes, showVictoryPopup]);
+  }, [votes, showVictoryPopup]);
 
   useEffect(() => {
     if (showVictoryPopup && victoryAudioRef.current) {
@@ -164,7 +164,7 @@ const ElectionGame = () => {
           className="mx-auto mb-1 h-12 w-auto object-contain"
         />
         {/* <h1 className="text-4xl font-bold mb-2">Election Game</h1> */}
-        <p className="text-xl">Votes: {Votes}</p>
+        <p className="text-xl">Votes: {votes}</p>
         <p className="text-xs mt-1">Use ← → Arrow Keys to move</p>
       </div>
 
@@ -204,7 +204,7 @@ const ElectionGame = () => {
           <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 z-20">
             <div className="text-center">
               <h2 className="text-4xl font-bold text-red-500 mb-4">Voting Over!</h2>
-              <p className="text-2xl text-white mb-6">Final Votes: {Votes}</p>
+              <p className="text-2xl text-white mb-6">Final Votes: {votes}</p>
               <button
                 onClick={resetGame}
                 className="px-8 py-4 bg-blue-500 text-white text-xl font-bold rounded-lg hover:bg-blue-600 transition"
